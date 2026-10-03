@@ -1,0 +1,8 @@
+const grid=document.querySelector("#grid"),q=document.querySelector("#q"),category=document.querySelector("#category"),empty=document.querySelector("#empty");
+let all=[];
+const money=n=>new Intl.NumberFormat("en-IN",{style:"currency",currency:"INR",maximumFractionDigits:0}).format(n);
+function render(){const term=q.value.toLowerCase().trim();const list=all.filter(p=>(category.value==="all"||p.category===category.value)&&[p.name,p.brand,p.specs].join(" ").toLowerCase().includes(term));grid.innerHTML="";empty.hidden=list.length>0;
+for(const p of list){const card=document.createElement("article");card.className="card";if(p.image){const img=document.createElement("img");img.src=p.image;img.alt=p.name;card.append(img)}else{const no=document.createElement("div");no.className="noimg";no.textContent="Photo coming soon";card.append(no)}
+const info=document.createElement("div");info.className="info";const h=document.createElement("h3");h.textContent=p.name;const detail=document.createElement("p");detail.textContent=[p.brand,p.specs].filter(Boolean).join("\n");const price=document.createElement("div");price.className="price";price.textContent=money(p.price);const link=document.createElement("a");link.href="https://wa.me/919750817586?text="+encodeURIComponent("Hi Karai Computers, I am interested in "+p.name);link.target="_blank";link.rel="noopener";link.textContent="Enquire on WhatsApp";info.append(h,detail,price,link);card.append(info);grid.append(card)}}
+async function load(){try{const r=await fetch("/api/products");all=await r.json();render()}catch{empty.hidden=false;empty.textContent="Unable to load products. Please try again later."}}
+q.addEventListener("input",render);category.addEventListener("change",render);load();
